@@ -79,3 +79,98 @@ JDBC나 JdbcTemplate를 직접 사용해 DDL을 실행시켜도 되지만, 스�
 
 application.properties에 ```spring.datasource.url```, ```spring.datasource.username```을 설정하지 않으면
 스프링 부트가 임베디드 데이터베이스를 실행시켜준다.
+***
+# 데이터베이스 접근 기술 - Mybatis
+### Mybatis
+기본적으로 JdbcTemplate이 제공하는 대부분의 기능을 제공한다.
+SQL을 XML에 편리하게 작성할 수 있고 또 동적 쿼리를 매우 편리하게 작성할 수 있다는 점이다.
+
+### 장점
+* 여러줄의 SQL 작성시 편리함
+  * JdbcTemplate - SQL 여러줄
+    ```angular2html
+    String sql = "update item " +
+     "set item_name=:itemName, price=:price, quantity=:quantity " +
+     "where id=:id";
+    ```
+  * MyBatis - SQL 여러줄
+    ```angular2html
+    <update id="update">
+      update item
+      set item_name = #{itemName},
+          price = #{price},
+          quantity = #{quantity}
+      where id = #{id}
+    </update>
+    ```
+* 동적 SQL 작성시 편리함
+  * JdbcTemplate - 동적 쿼리
+  ```
+  String sql = "select id, item_name, price, quantity from item";
+  //동적 쿼리
+  if (StringUtils.hasText(itemName) || maxPrice != null) {
+      sql += " where";
+  }
+
+  boolean andFlag = false;
+  if (StringUtils.hasText(itemName)) {
+      sql += " item_name like concat('%',:itemName,'%')";
+      andFlag = true;
+  }
+  if (maxPrice != null) {
+      if (andFlag) {
+          sql += " and";
+      }
+      sql += " price <= :maxPrice";
+  }
+  log.info("sql={}", sql);
+  return template.query(sql, param, itemRowMapper());
+  ```
+  * MyBatis - 동적 쿼리
+  ```
+  <select id="findAll" resultType="Item">
+      select id, item_name, price, quantity
+      from item
+      <where>
+          <if test="itemName != null and itemName != ''">
+              and item_name like concat('%',#{itemName},'%')
+          </if>
+          <if test="maxPrice != null">
+              and price &lt;= #{maxPrice}
+          </if>
+      </where>
+  </select>
+  ```
+### 단점
+  * JdbcTemplate은 스프링에 내장된 기능이고, 별도의 설정없이 사용할 수 있다는 장점이 있다. 반면에
+    MyBatis는 약간의 설정이 필요하다.
+
+### Mybatis 설정
+```mybatis-spring-boot-starter```라이브러리를 사용하면 MyBatis를 스프링과 통합하고, 설정도 아주
+간단히 할 수 있다.
+```build.gradle```에 다음 의존 관계를 추가한다.
+```angular2html
+implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
+```
+* 참고로 뒤에 버전 정보가 붙는 이유는 스프링 부트가 버전을 관리해주는 공식 라이브러리가 아니기
+때문이다. 스프링 부트가 버전을 관리해주는 경우 버전 정보를 붙이지 않아도 최적의 버전을 자동으로
+찾아준다.
+
+의존 관계를 추가하면 다음과 같은 라이브러리가 추가된다.
+* ```mybatis-spring-boot-starter```: MyBatis를 스프링 부트에서 편리하게 사용할 수 있게 시작하는
+라이브러리
+* ```mybatis-spring-boot-autoconfigure```: MyBatis와 스프링 부트 설정 라이브러리
+* ```mybatis-spring```: MyBatis와 스프링을 연동하는 라이브러리
+* ```mybatis```: MyBatis 라이브러리
+
+라이브러리가 추가되면 ```application.properties```에 Mybatis 관련 설정들을 넣어준다.
+* ```mybatis.type-aliases-package```:
+  * Mybatis타입 정보를 사용할 때는 패키지 이름을 적어주어야 하는데, 여기에 명시하면 패키지
+    이름을 생략할 수 있다.
+  * 지정한 패키지와 그 하위 패키지가 자동으로 인식된다.
+  * 여러 위치를 지정하려면 ```,```, ```;``` 로 구분하면 된다.
+* ```mybatis.configuration.map-underscore-to-camel-case```:
+  * JdbcTemplate의 BeanPropertyRowMapper 에서 처럼 언더바를 카멜로 자동 변경해주는 기능을
+    활성화 한다.
+* ```logging.level.hello.itemservice.repository.mybatis=trace```:
+  * MyBatis에서 실행되는 쿼리 로그를 확인할 수 있다.
