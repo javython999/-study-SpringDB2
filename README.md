@@ -88,13 +88,13 @@ SQL을 XML에 편리하게 작성할 수 있고 또 동적 쿼리를 매우 편�
 ### 장점
 * 여러줄의 SQL 작성시 편리함
   * JdbcTemplate - SQL 여러줄
-    ```angular2html
+    ```java
     String sql = "update item " +
      "set item_name=:itemName, price=:price, quantity=:quantity " +
      "where id=:id";
     ```
   * MyBatis - SQL 여러줄
-    ```angular2html
+    ```xml
     <update id="update">
       update item
       set item_name = #{itemName},
@@ -105,7 +105,7 @@ SQL을 XML에 편리하게 작성할 수 있고 또 동적 쿼리를 매우 편�
     ```
 * 동적 SQL 작성시 편리함
   * JdbcTemplate - 동적 쿼리
-  ```
+  ```java
   String sql = "select id, item_name, price, quantity from item";
   //동적 쿼리
   if (StringUtils.hasText(itemName) || maxPrice != null) {
@@ -127,7 +127,7 @@ SQL을 XML에 편리하게 작성할 수 있고 또 동적 쿼리를 매우 편�
   return template.query(sql, param, itemRowMapper());
   ```
   * MyBatis - 동적 쿼리
-  ```
+  ```xml
   <select id="findAll" resultType="Item">
       select id, item_name, price, quantity
       from item
