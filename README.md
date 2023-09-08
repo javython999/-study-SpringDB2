@@ -174,3 +174,27 @@ implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.0'
     활성화 한다.
 * ```logging.level.hello.itemservice.repository.mybatis=trace```:
   * MyBatis에서 실행되는 쿼리 로그를 확인할 수 있다.
+***
+# 데이터베이스 접근 기술 - JPA
+### JPA
+JPA는 스프링과 더불어 자바 엔터프라이즈 시장의 주력 기술이다.
+스프링이 DI 컨테이너를 포함한 애플리케이션 전반의 다양한 기능을 제공한다면, JPA는 ORM 데이터 접근 기술을 제공한다.
+
+### ORM
+Object Relational Mapping(객체-관계-매핑)의 약자로 객체와 데이터베이스를 매핑해주는 도구다.
+ORM은 아래와 같은 문제를 해결하기 위해 등장하게 되었다.
+
+* SQL 중심적인 개발의 문제점
+  1. 객체를 관계형 DB에 저장 관리
+  2. SQL 중심적인 개발 발생
+  3. SQL 작성 무한 반복, 지루한 코드(객체를 SQL로, SQL을 객체로)
+  4. SQL에 의존적인 개발을 피하기 어려워진다.
+  5. 개발자가 SQL매퍼의 역할을 하게 된다.
+* 객체와 관계형 데이터베이스 패러다임 불일치
+  1. 객체를 객체 답게 모델링 할 수록 매핑 작업량이 늘어난다.
+
+자바에서 ORM 기술을 쉽게 사용 할 수 있도록 해주는 기술이 JPA다.
+
+
+
+
