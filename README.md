@@ -195,6 +195,42 @@ ORM은 아래와 같은 문제를 해결하기 위해 등장하게 되었다.
 
 자바에서 ORM 기술을 쉽게 사용 할 수 있도록 해주는 기술이 JPA다.
 
+### JPA 설정
+```spring-boot-starter-data-jpa```라이브러리를 ```build.gradle```에 추가 한다.
+```build.gradle```에 ```spring-boot-starter-jdbc```가 있다면 제거 한다.
+```spring-boot-starter-data-jpa```에 포함(의존)되어 있다.
 
+라이브러리 설정이 완료되면 다음과 같은 라이브러리가 추가 된다.
+* ```hibernate-core```: JPA 구현체인 하이버네이트 라이브러리
+* ```jakarta.persistence-api```: JPA 인터페이스
+* ```spring-data-jpa```: 스프링 데이터 JPA 라이브러리
 
+```application.properties```에 다음 설정을 추가한다.
+```properties
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+```
+* ```org.hibernate.SQL=DEBUG```:  하이버네이트가 생성하고 실행하는 SQL을 확인할 수 있다.
+* ```org.hibernate.type.descriptor.sql.BasicBinder=TRACE```: SQL에 바인딩 되는 파라미터를 확인할
+  수 있다.
+
+#### 스프링 부트 3.0
+스프링 부트 3.0 이상을 사용하면 하이버네이트 6버전을 사용하게 되는데
+로그 설정 방식이 달라졌다. 다음과 같이 설정해야 한다.
+```properties
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.orm.jdbc.bind=TRACE
+```
+
+### 장점
+* 데이터 CRUD를 반복적인 SQL작성 없이 가능하게 해준다.
+
+### 단점
+* 동적 쿼리 작성이 번거롭고 복잡하다. (하지만 Querydsl 기술을 사용하면 매우 깔끔하게 사용할 수 있다.)
+* SQL 작성시 SQL이 아닌 JPQL로 작성해야 한다. JPQL은 SQL과 매우 비슷하지만 다른부분이 존재한다.
+
+#### JPQL
+JPA는 JPQL(Java Persistence Query Language)라는 객체지향 쿼리 언어를 제공한다.
+주로 여러 데이터를 복잡한 조건으로 조회할 때 사용한다. 작성시 대소문자를 구별하기 때문에 주의가 필요하다.
+JPQL은 SQL과 문법이 거의 비슷하기 때문에 개발자들이 쉽게 적응할 수 있다.
 
